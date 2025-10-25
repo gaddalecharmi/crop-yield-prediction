@@ -34,11 +34,6 @@ wheels/
 *.h5
 *.model
 
-# Large CSV files - Keep only sample/small files
-crop_yield.csv
-crop_yield_cleaned.csv
-crop_yield_cleaned_encoded.csv
-
 # Environment variables
 .env
 .env.local
