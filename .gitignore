@@ -28,11 +28,16 @@ wheels/
 .ipynb_checkpoints
 *.ipynb_checkpoints
 
-# ML Models (if you want to track them, remove these lines)
-# *.pkl
-# *.joblib
-# *.h5
-# *.model
+# ML Models - DO NOT PUSH LARGE MODEL FILES TO GITHUB
+*.pkl
+*.joblib
+*.h5
+*.model
+
+# Large CSV files - Keep only sample/small files
+crop_yield.csv
+crop_yield_cleaned.csv
+crop_yield_cleaned_encoded.csv
 
 # Environment variables
 .env
