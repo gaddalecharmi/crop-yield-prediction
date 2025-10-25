@@ -1,0 +1,38 @@
+[
+  {
+    "retrain_date": "2025-10-25T11:56:42.637811",
+    "model_version": "Random_Forest_v1.0",
+    "dataset_size": 19577,
+    "metrics": {
+      "mse": 0.25996442769585193,
+      "rmse": 0.5098670686520673,
+      "r2_score": 0.902945205552421,
+      "train_score": 0.9582098285261216,
+      "test_score": 0.902945205552421
+    },
+    "training_duration_seconds": 16.541885,
+    "data_summary": {
+      "total_records": 19577,
+      "features_count": 7
+    },
+    "status": "success"
+  },
+  {
+    "retrain_date": "2025-10-25T19:02:48.432912",
+    "model_version": "Random_Forest_v1.0",
+    "dataset_size": 19577,
+    "metrics": {
+      "mse": 0.25996442769585193,
+      "rmse": 0.5098670686520673,
+      "r2_score": 0.902945205552421,
+      "train_score": 0.9582098285261216,
+      "test_score": 0.902945205552421
+    },
+    "training_duration_seconds": 1.222264,
+    "data_summary": {
+      "total_records": 19577,
+      "features_count": 7
+    },
+    "status": "success"
+  }
+]
