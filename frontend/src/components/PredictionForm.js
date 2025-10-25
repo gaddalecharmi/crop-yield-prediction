@@ -37,14 +37,77 @@ const PredictionForm = () => {
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
     setError('');
     setPrediction(null);
+
+    // Auto-fill rainfall when state is selected
+    if (name === 'State' && value) {
+      try {
+        const response = await axios.get(`/api/crops/rainfall/${value}`);
+        if (response.data && response.data.estimated_annual_rainfall) {
+          setFormData(prev => ({
+            ...prev,
+            State: value,
+            Annual_Rainfall: response.data.estimated_annual_rainfall
+          }));
+        }
+      } catch (err) {
+        console.error('Error fetching rainfall data:', err);
+        // Continue without rainfall data - user can enter manually
+      }
+    }
   };
+
+  // New function to auto-predict fertilizer and pesticide
+  const predictInputs = async (updatedFormData) => {
+    const { Crop, Crop_Year, Season, State, Area, Annual_Rainfall } = updatedFormData;
+    
+    // Check if all required fields are filled
+    if (Crop && Crop_Year && Season && State && Area && Annual_Rainfall) {
+      try {
+        console.log('🌾 Auto-predicting fertilizer and pesticide...');
+        const response = await axios.post('/api/crops/predict-inputs', {
+          Crop,
+          Crop_Year,
+          Season,
+          State,
+          Area: parseFloat(Area),
+          Annual_Rainfall: parseFloat(Annual_Rainfall)
+        });
+        
+        if (response.data && response.data.success) {
+          setFormData(prev => ({
+            ...prev,
+            Fertilizer: response.data.predicted_fertilizer,
+            Pesticide: response.data.predicted_pesticide
+          }));
+          console.log('✅ Auto-filled fertilizer and pesticide');
+        }
+      } catch (err) {
+        console.error('Error predicting inputs:', err);
+        // Continue without auto-filled values - user can enter manually
+      }
+    }
+  };
+
+  // Trigger input prediction when Area or Annual_Rainfall changes (after all other fields are filled)
+  useEffect(() => {
+    const { Crop, Crop_Year, Season, State, Area, Annual_Rainfall } = formData;
+    if (Crop && Crop_Year && Season && State && Area && Annual_Rainfall) {
+      // Debounce the prediction to avoid too many API calls
+      const timeoutId = setTimeout(() => {
+        predictInputs(formData);
+      }, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [formData.Crop, formData.Crop_Year, formData.Season, formData.State, formData.Area, formData.Annual_Rainfall]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -150,26 +213,26 @@ const PredictionForm = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label>Annual Rainfall (mm) *</label>
+            <label>Annual Rainfall (mm) * 🌧️</label>
             <input
               type="number"
               name="Annual_Rainfall"
               value={formData.Annual_Rainfall}
               onChange={handleChange}
-              placeholder="Enter rainfall"
+              placeholder="Auto-filled by weather data"
               step="0.01"
               required
             />
           </div>
 
           <div className="form-group">
-            <label>Fertilizer (kg) *</label>
+            <label>Fertilizer (kg) * 🤖</label>
             <input
               type="number"
               name="Fertilizer"
               value={formData.Fertilizer}
               onChange={handleChange}
-              placeholder="Enter fertilizer amount"
+              placeholder="Auto-predicted by AI"
               step="0.01"
               required
             />
@@ -178,13 +241,13 @@ const PredictionForm = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label>Pesticide (kg) *</label>
+            <label>Pesticide (kg) * 🤖</label>
             <input
               type="number"
               name="Pesticide"
               value={formData.Pesticide}
               onChange={handleChange}
-              placeholder="Enter pesticide amount"
+              placeholder="Auto-predicted by AI"
               step="0.01"
               required
             />

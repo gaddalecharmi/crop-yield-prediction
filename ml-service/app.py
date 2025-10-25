@@ -23,6 +23,10 @@ MODEL_PATH = 'best_crop_yield_model_Random_Forest.pkl'
 ENCODERS_PATH = 'label_encoders.pkl'
 RETRAINING_LOG_PATH = 'retraining_log.json'
 
+# Fertilizer & Pesticide prediction model
+fert_pest_model = None
+FERT_PEST_MODEL_PATH = 'fertilizer_pesticide_model.pkl'
+
 def load_and_train_model():
     """Load data and train the model"""
     global model, label_encoders
@@ -135,7 +139,7 @@ def load_and_train_model():
 
 def load_saved_model():
     """Load saved model and encoders"""
-    global model, label_encoders
+    global model, label_encoders, fert_pest_model
     try:
         # Try to load pickle model
         if os.path.exists(MODEL_PATH):
@@ -152,6 +156,26 @@ def load_saved_model():
                 # Train encoders from dataset if not found
                 print("⚠️ Encoders not found, creating from dataset...")
                 create_encoders_from_dataset()
+            
+            # Load fertilizer/pesticide prediction model - USE JOBLIB
+            if os.path.exists(FERT_PEST_MODEL_PATH):
+                try:
+                    print(f"🔄 Loading Fertilizer/Pesticide model from {FERT_PEST_MODEL_PATH}...")
+                    fert_pest_model = joblib.load(FERT_PEST_MODEL_PATH)
+                    print(f"✅ Loaded Fertilizer/Pesticide prediction model (type: {type(fert_pest_model).__name__})")
+                except Exception as e:
+                    print(f"❌ Error loading Fertilizer/Pesticide model: {str(e)}")
+                    print(f"   Trying with pickle...")
+                    try:
+                        with open(FERT_PEST_MODEL_PATH, 'rb') as f:
+                            fert_pest_model = pickle.load(f)
+                        print(f"✅ Loaded with pickle")
+                    except Exception as e2:
+                        print(f"❌ Failed with pickle too: {str(e2)}")
+                        fert_pest_model = None
+            else:
+                print("⚠️ Fertilizer/Pesticide model not found. Auto-prediction will not be available.")
+            
             return True
         elif os.path.exists('best_crop_yield_model_Random_Forest.joblib'):
             # Fallback to old joblib model if exists
@@ -279,7 +303,7 @@ def predict():
         data = request.json
         print(f"📥 Received data: {data}")
         
-        # Validate required fields
+        # Validate required fields (Crop_Year is optional, will default to current year)
         required_fields = ['Crop', 'Season', 'State', 'Area', 'Annual_Rainfall', 'Fertilizer', 'Pesticide']
         for field in required_fields:
             if field not in data:
@@ -319,15 +343,28 @@ def predict():
             }), 400
         
         # Prepare features as DataFrame with encoded values
+        # IMPORTANT: Column names must match what model expects (not _encoded suffix)
+        # Model expects: Crop, Crop_Year, Season, State, Area, Production, Annual_Rainfall, Fertilizer, Pesticide
+        
+        # Get Crop_Year from request or use current year as default
+        crop_year = int(data.get('Crop_Year', 2025))
+        
         features_df = pd.DataFrame({
-            'Crop_encoded': [crop_encoded],
-            'Season_encoded': [season_encoded],
-            'State_encoded': [state_encoded],
+            'Crop': [crop_encoded],  # Use 'Crop' not 'Crop_encoded'
+            'Crop_Year': [crop_year],  # Add Crop_Year
+            'Season': [season_encoded],  # Use 'Season' not 'Season_encoded'
+            'State': [state_encoded],  # Use 'State' not 'State_encoded'
             'Area': [float(data['Area'])],
+            'Production': [0.0],  # Add Production with placeholder (will be calculated later)
             'Annual_Rainfall': [float(data['Annual_Rainfall'])],
             'Fertilizer': [float(data['Fertilizer'])],
             'Pesticide': [float(data['Pesticide'])]
         })
+        
+        # Reorder columns to match model's expected feature order
+        if hasattr(model, 'feature_names_in_'):
+            features_df = features_df[model.feature_names_in_]
+            print(f"✅ Reordered columns to match model: {list(features_df.columns)}")
         
         # Make prediction
         print(f"🔮 Making prediction with features: {features_df.to_dict()}")
@@ -346,6 +383,62 @@ def predict():
         
     except Exception as e:
         print(f"❌ Prediction error: {type(e).__name__}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            'error': str(e),
+            'error_type': type(e).__name__,
+            'status': 'error'
+        }), 500
+
+@app.route('/predict-inputs', methods=['POST'])
+def predict_inputs():
+    """Predict Fertilizer and Pesticide requirements based on crop details"""
+    try:
+        if fert_pest_model is None:
+            return jsonify({
+                'error': 'Fertilizer/Pesticide prediction model not loaded',
+                'message': 'Please ensure fertilizer_pesticide_model.pkl exists in ml-service folder'
+            }), 400
+        
+        data = request.json
+        print(f"📥 Received input prediction request: {data}")
+        
+        # Validate required fields (no Fertilizer/Pesticide needed for input)
+        required_fields = ['Crop', 'Crop_Year', 'Season', 'State', 'Area', 'Annual_Rainfall']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'error': f'Missing field: {field}'}), 400
+        
+        # Prepare input DataFrame exactly as the model expects
+        input_df = pd.DataFrame({
+            'Crop': [str(data['Crop']).strip()],
+            'Crop_Year': [int(data['Crop_Year'])],
+            'Season': [str(data['Season']).strip()],
+            'State': [str(data['State']).strip()],
+            'Area': [float(data['Area'])],
+            'Annual_Rainfall': [float(data['Annual_Rainfall'])]
+        })
+        
+        print(f"🔮 Predicting inputs with: {input_df.to_dict()}")
+        
+        # Make prediction - returns [Fertilizer, Pesticide]
+        predictions = fert_pest_model.predict(input_df)[0]
+        predicted_fertilizer = float(predictions[0])
+        predicted_pesticide = float(predictions[1])
+        
+        print(f"✅ Input prediction successful: Fertilizer={predicted_fertilizer:.2f}, Pesticide={predicted_pesticide:.2f}")
+        
+        return jsonify({
+            'predicted_fertilizer': round(predicted_fertilizer, 2),
+            'predicted_pesticide': round(predicted_pesticide, 2),
+            'input_data': data,
+            'status': 'success',
+            'message': 'Successfully predicted fertilizer and pesticide requirements'
+        })
+        
+    except Exception as e:
+        print(f"❌ Input prediction error: {type(e).__name__}: {str(e)}")
         import traceback
         traceback.print_exc()
         return jsonify({

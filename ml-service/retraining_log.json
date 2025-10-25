@@ -34,5 +34,41 @@
       "features_count": 7
     },
     "status": "success"
+  },
+  {
+    "retrain_date": "2025-10-25T22:18:22.388875",
+    "model_version": "Random_Forest_v1.0",
+    "dataset_size": 19577,
+    "metrics": {
+      "mse": 0.25996442769585193,
+      "rmse": 0.5098670686520673,
+      "r2_score": 0.902945205552421,
+      "train_score": 0.9582098285261216,
+      "test_score": 0.902945205552421
+    },
+    "training_duration_seconds": 1.636077,
+    "data_summary": {
+      "total_records": 19577,
+      "features_count": 7
+    },
+    "status": "success"
+  },
+  {
+    "retrain_date": "2025-10-25T22:18:27.396274",
+    "model_version": "Random_Forest_v1.0",
+    "dataset_size": 19577,
+    "metrics": {
+      "mse": 0.25996442769585193,
+      "rmse": 0.5098670686520673,
+      "r2_score": 0.902945205552421,
+      "train_score": 0.9582098285261216,
+      "test_score": 0.902945205552421
+    },
+    "training_duration_seconds": 1.735025,
+    "data_summary": {
+      "total_records": 19577,
+      "features_count": 7
+    },
+    "status": "success"
   }
 ]
