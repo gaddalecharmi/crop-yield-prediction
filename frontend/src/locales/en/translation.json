@@ -1,0 +1,131 @@
+{
+  "app": {
+    "title": "Crop Yield Prediction System",
+    "subtitle": "AI-Powered Agricultural Analytics"
+  },
+  "nav": {
+    "home": "Home",
+    "predict": "Predict Yield",
+    "data": "Data Records",
+    "statistics": "Statistics",
+    "language": "Language"
+  },
+  "prediction": {
+    "title": "Predict Crop Yield",
+    "subtitle": "Enter crop details to predict yield and optimal inputs",
+    "form": {
+      "crop": "Crop Name",
+      "cropPlaceholder": "Select crop type",
+      "year": "Crop Year",
+      "yearPlaceholder": "Enter year (e.g., 2024)",
+      "season": "Season",
+      "seasonPlaceholder": "Select season",
+      "state": "State",
+      "statePlaceholder": "Select state",
+      "area": "Area (hectares)",
+      "areaPlaceholder": "Enter cultivated area",
+      "rainfall": "Annual Rainfall (mm)",
+      "rainfallPlaceholder": "Enter rainfall amount",
+      "fertilizer": "Fertilizer (kg/ha)",
+      "fertilizerPlaceholder": "Enter fertilizer amount",
+      "pesticide": "Pesticide (kg/ha)",
+      "pesticidePlaceholder": "Enter pesticide amount",
+      "predictBtn": "Predict Yield",
+      "predictingBtn": "Predicting...",
+      "predictInputsBtn": "Predict Fertilizer & Pesticide",
+      "predictingInputsBtn": "Calculating..."
+    },
+    "results": {
+      "title": "Prediction Results",
+      "yield": "Predicted Yield",
+      "production": "Estimated Production",
+      "fertilizer": "Recommended Fertilizer",
+      "pesticide": "Recommended Pesticide",
+      "tonsPerHectare": "tons/hectare",
+      "tons": "tons",
+      "kgPerHectare": "kg/hectare"
+    },
+    "messages": {
+      "fillAllFields": "Please fill in all required fields",
+      "success": "Prediction successful!",
+      "error": "Prediction failed. Please try again.",
+      "inputsSuccess": "Fertilizer and pesticide recommendations calculated!"
+    }
+  },
+  "dataTable": {
+    "title": "Crop Yield Records",
+    "subtitle": "Complete database of historical crop data",
+    "search": "Search...",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "records": "records",
+    "previous": "Previous",
+    "next": "Next",
+    "noData": "No data available",
+    "filters": {
+      "allCrops": "All Crops",
+      "allStates": "All States",
+      "allSeasons": "All Seasons",
+      "allYears": "All Years"
+    },
+    "columns": {
+      "crop": "Crop",
+      "year": "Year",
+      "season": "Season",
+      "state": "State",
+      "area": "Area (ha)",
+      "production": "Production (tons)",
+      "yield": "Yield (t/ha)",
+      "rainfall": "Rainfall (mm)",
+      "fertilizer": "Fertilizer (kg/ha)",
+      "pesticide": "Pesticide (kg/ha)"
+    }
+  },
+  "statistics": {
+    "title": "Analytics Dashboard",
+    "subtitle": "Visualize crop yield trends and patterns",
+    "loading": "Loading statistics...",
+    "error": "Error loading data",
+    "retry": "Retry",
+    "noData": "No data available for statistics",
+    "loadData": "Load Data",
+    "charts": {
+      "yieldTrend": "Yield Trend Over the Years",
+      "filterByCrop": "Filter by Crop:",
+      "allCrops": "All",
+      "avgYield": "Average Yield (tons/ha)",
+      "year": "Year",
+      "stateYield": "State-wise Average Yield",
+      "filterByState": "Filter by State:",
+      "allStates": "All",
+      "stateYieldByCrop": "{{state}} - Yield by Crop",
+      "allCropsState": "State-wise Average Yield (All Crops)",
+      "crop": "Crop",
+      "state": "State"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "clear": "Clear Filters",
+    "submit": "Submit",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All"
+  },
+  "languages": {
+    "en": "English",
+    "hi": "हिंदी (Hindi)",
+    "te": "తెలుగు (Telugu)",
+    "ta": "தமிழ் (Tamil)",
+    "kn": "ಕನ್ನಡ (Kannada)"
+  }
+}

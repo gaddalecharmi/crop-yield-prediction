@@ -163,13 +163,26 @@ def load_saved_model():
                     print(f"🔄 Loading Fertilizer/Pesticide model from {FERT_PEST_MODEL_PATH}...")
                     fert_pest_model = joblib.load(FERT_PEST_MODEL_PATH)
                     print(f"✅ Loaded Fertilizer/Pesticide prediction model (type: {type(fert_pest_model).__name__})")
+                    
+                    # Verify it's a valid model with predict method
+                    if not hasattr(fert_pest_model, 'predict'):
+                        print(f"⚠️ WARNING: Loaded object doesn't have predict method. Type: {type(fert_pest_model)}")
+                        fert_pest_model = None
+                    else:
+                        print(f"✅ Model verification passed - has predict method")
+                        
                 except Exception as e:
                     print(f"❌ Error loading Fertilizer/Pesticide model: {str(e)}")
                     print(f"   Trying with pickle...")
                     try:
                         with open(FERT_PEST_MODEL_PATH, 'rb') as f:
                             fert_pest_model = pickle.load(f)
-                        print(f"✅ Loaded with pickle")
+                        print(f"✅ Loaded with pickle (type: {type(fert_pest_model).__name__})")
+                        
+                        # Verify it's valid
+                        if not hasattr(fert_pest_model, 'predict'):
+                            print(f"⚠️ WARNING: Loaded object doesn't have predict method")
+                            fert_pest_model = None
                     except Exception as e2:
                         print(f"❌ Failed with pickle too: {str(e2)}")
                         fert_pest_model = None
@@ -309,9 +322,9 @@ def predict():
             if field not in data:
                 return jsonify({'error': f'Missing field: {field}'}), 400
         
-        # Normalize input data - pad Season to match encoder format (seasons have trailing spaces)
+        # Normalize input data - strip all whitespace since encoders are now created from stripped values
         crop_value = str(data['Crop']).strip()
-        season_value = str(data['Season']).strip().ljust(11)  # Pad to 11 chars
+        season_value = str(data['Season']).strip()  # Remove all trailing/leading spaces
         state_value = str(data['State']).strip()
         
         print(f"🔍 Normalized values - Crop: '{crop_value}', Season: '{season_value}', State: '{state_value}'")
@@ -369,6 +382,9 @@ def predict():
         # Make prediction
         print(f"🔮 Making prediction with features: {features_df.to_dict()}")
         prediction = model.predict(features_df)[0]
+        
+        # Handle negative predictions - ensure non-negative values
+        prediction = max(0.0, float(prediction))
         print(f"✅ Prediction successful: {prediction}")
         
         # Calculate estimated production
@@ -421,11 +437,34 @@ def predict_inputs():
         })
         
         print(f"🔮 Predicting inputs with: {input_df.to_dict()}")
+        print(f"🔍 Model type: {type(fert_pest_model).__name__}")
+        print(f"🔍 Model has predict: {hasattr(fert_pest_model, 'predict')}")
         
-        # Make prediction - returns [Fertilizer, Pesticide]
-        predictions = fert_pest_model.predict(input_df)[0]
-        predicted_fertilizer = float(predictions[0])
-        predicted_pesticide = float(predictions[1])
+        # Verify model is valid before prediction
+        if not hasattr(fert_pest_model, 'predict'):
+            return jsonify({
+                'error': 'Invalid model object',
+                'message': f'Loaded model is of type {type(fert_pest_model).__name__} and does not have predict method',
+                'hint': 'Please retrain and save the fertilizer/pesticide model correctly'
+            }), 500
+        
+        # Make prediction - returns array with shape (1, 2) for [Fertilizer, Pesticide]
+        predictions = fert_pest_model.predict(input_df)
+        print(f"🔍 Predictions shape: {predictions.shape if hasattr(predictions, 'shape') else 'N/A'}")
+        print(f"🔍 Raw predictions: {predictions}")
+        
+        # Handle different prediction formats
+        if len(predictions.shape) == 2:
+            predicted_fertilizer = float(predictions[0][0])
+            predicted_pesticide = float(predictions[0][1])
+        else:
+            predicted_fertilizer = float(predictions[0])
+            predicted_pesticide = float(predictions[1])
+        
+        # Handle negative predictions - clamp to zero
+        # Fertilizer and Pesticide cannot be negative
+        predicted_fertilizer = max(0.0, predicted_fertilizer)
+        predicted_pesticide = max(0.0, predicted_pesticide)
         
         print(f"✅ Input prediction successful: Fertilizer={predicted_fertilizer:.2f}, Pesticide={predicted_pesticide:.2f}")
         

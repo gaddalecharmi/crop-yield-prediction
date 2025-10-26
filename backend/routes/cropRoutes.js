@@ -88,6 +88,19 @@ router.get('/filters', async (req, res) => {
   }
 });
 
+// Get all data for statistics (no pagination)
+router.get('/stats/all', async (req, res) => {
+  try {
+    console.log('📊 Fetching all crops for statistics...');
+    const crops = await Crop.find({}).select('-__v').lean();
+    console.log(`✅ Fetched ${crops.length} records for statistics`);
+    res.json(crops);
+  } catch (error) {
+    console.error('❌ Error fetching statistics data:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Get rainfall data for a state
 router.get('/rainfall/:state', async (req, res) => {
   try {

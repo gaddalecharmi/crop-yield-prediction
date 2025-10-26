@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const cropRoutes = require('./routes/cropRoutes');
+const translateRoutes = require('./routes/translateRoutes');
 
 dotenv.config();
 
@@ -23,9 +24,13 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // Routes
 app.use('/api/crops', cropRoutes);
+app.use('/api/translate', translateRoutes);
 
 app.get('/', (req, res) => {
-  res.json({ message: 'Crop Yield Prediction API is running!' });
+  res.json({ 
+    message: 'Crop Yield Prediction API is running!',
+    features: ['Crop Yield Prediction', 'Data Management', 'Statistics', 'Multilingual Support']
+  });
 });
 
 // Error handling middleware

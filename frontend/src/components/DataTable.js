@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import './DataTable.css';
+import { translateDropdownValue } from '../utils/translationMappings';
 
 const DataTable = () => {
+  const { t, i18n } = useTranslation();
   const [crops, setCrops] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,10 +16,34 @@ const DataTable = () => {
     season: '',
     year: ''
   });
+  const [filterOptions, setFilterOptions] = useState({
+    crops: [],
+    states: [],
+    seasons: [],
+    years: []
+  });
+
+  useEffect(() => {
+    fetchFilterOptions();
+  }, []);
 
   useEffect(() => {
     fetchCrops();
   }, [currentPage, filters]);
+
+  const fetchFilterOptions = async () => {
+    try {
+      const response = await axios.get('/api/crops/filters');
+      setFilterOptions({
+        crops: response.data.crops || [],
+        states: response.data.states || [],
+        seasons: response.data.seasons || [],
+        years: response.data.years || []
+      });
+    } catch (err) {
+      console.error('Error fetching filter options:', err);
+    }
+  };
 
   const fetchCrops = async () => {
     setLoading(true);
@@ -51,67 +78,94 @@ const DataTable = () => {
 
   return (
     <div className="data-table-container">
-      <h2>📊 Crop Yield Data</h2>
+      <h2>📊 {t('dataTable.title')}</h2>
+      <p className="table-subtitle">{t('dataTable.subtitle')}</p>
 
       <div className="filters">
-        <input
-          type="text"
+        <select
           name="crop"
-          placeholder="Filter by crop..."
           value={filters.crop}
           onChange={handleFilterChange}
-        />
-        <input
-          type="text"
+          className="filter-select"
+        >
+          <option value="">{t('dataTable.filters.allCrops')}</option>
+          {filterOptions.crops.map(crop => (
+            <option key={crop} value={crop}>
+              {translateDropdownValue(crop, 'crop', i18n.language)}
+            </option>
+          ))}
+        </select>
+
+        <select
           name="state"
-          placeholder="Filter by state..."
           value={filters.state}
           onChange={handleFilterChange}
-        />
-        <input
-          type="text"
+          className="filter-select"
+        >
+          <option value="">{t('dataTable.filters.allStates')}</option>
+          {filterOptions.states.map(state => (
+            <option key={state} value={state}>
+              {translateDropdownValue(state, 'state', i18n.language)}
+            </option>
+          ))}
+        </select>
+
+        <select
           name="season"
-          placeholder="Filter by season..."
           value={filters.season}
           onChange={handleFilterChange}
-        />
-        <input
-          type="number"
+          className="filter-select"
+        >
+          <option value="">{t('dataTable.filters.allSeasons')}</option>
+          {filterOptions.seasons.map(season => (
+            <option key={season} value={season}>
+              {translateDropdownValue(season, 'season', i18n.language)}
+            </option>
+          ))}
+        </select>
+
+        <select
           name="year"
-          placeholder="Filter by year..."
           value={filters.year}
           onChange={handleFilterChange}
-        />
+          className="filter-select"
+        >
+          <option value="">{t('dataTable.filters.allYears')}</option>
+          {filterOptions.years.map(year => (
+            <option key={year} value={year}>{year}</option>
+          ))}
+        </select>
+
         <button onClick={handleClearFilters} className="clear-btn">
-          Clear Filters
+          {t('common.clear')}
         </button>
       </div>
 
       {loading ? (
-        <div className="loading">Loading data...</div>
+        <div className="loading">{t('common.loading')}</div>
       ) : (
         <>
           <div className="table-wrapper">
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Crop</th>
-                  <th>Year</th>
-                  <th>Season</th>
-                  <th>State</th>
-                  <th>Area (ha)</th>
-                  <th>Production</th>
-                  <th>Yield</th>
-                  <th>Rainfall (mm)</th>
+                  <th>{t('dataTable.columns.crop')}</th>
+                  <th>{t('dataTable.columns.year')}</th>
+                  <th>{t('dataTable.columns.season')}</th>
+                  <th>{t('dataTable.columns.state')}</th>
+                  <th>{t('dataTable.columns.area')}</th>
+                  <th>{t('dataTable.columns.production')}</th>
+                  <th>{t('dataTable.columns.yield')}</th>
+                  <th>{t('dataTable.columns.rainfall')}</th>
                 </tr>
               </thead>
               <tbody>
                 {crops.map((crop, index) => (
                   <tr key={index}>
-                    <td>{crop.Crop}</td>
+                    <td>{translateDropdownValue(crop.Crop, 'crop', i18n.language)}</td>
                     <td>{crop.Crop_Year}</td>
-                    <td>{crop.Season}</td>
-                    <td>{crop.State}</td>
+                    <td>{translateDropdownValue(crop.Season, 'season', i18n.language)}</td>
+                    <td>{translateDropdownValue(crop.State, 'state', i18n.language)}</td>
                     <td>{crop.Area.toLocaleString()}</td>
                     <td>{crop.Production.toLocaleString()}</td>
                     <td>{crop.Yield.toFixed(2)}</td>
@@ -127,16 +181,16 @@ const DataTable = () => {
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
-              Previous
+              {t('dataTable.previous')}
             </button>
             <span>
-              Page {currentPage} of {totalPages}
+              {t('dataTable.showing')} {currentPage} {t('dataTable.of')} {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
             >
-              Next
+              {t('dataTable.next')}
             </button>
           </div>
         </>

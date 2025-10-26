@@ -1,3 +1,6 @@
+/* Import Google Fonts for multilingual support */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Noto+Sans+Telugu:wght@300;400;500;600;700&family=Noto+Sans+Tamil:wght@300;400;500;600;700&family=Noto+Sans+Kannada:wght@300;400;500;600;700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -5,16 +8,45 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  /* Multilingual font stack - supports English, Hindi, Telugu, Tamil, Kannada */
+  font-family: 'Poppins', 'Noto Sans Devanagari', 'Noto Sans Telugu', 'Noto Sans Tamil', 'Noto Sans Kannada', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  /* Beautiful crop-themed background with actual image */
+  background: linear-gradient(rgba(255, 255, 255, 0.65), rgba(245, 250, 245, 0.7)),
+              url('../public/background.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
   min-height: 100vh;
+  color: #2d3748;
+}
+
+/* Add subtle grain texture for organic feel */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(52, 168, 83, 0.03) 2px, rgba(52, 168, 83, 0.03) 4px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ensure content appears above the texture */
+#root {
+  position: relative;
+  z-index: 2;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: 'Courier New', monospace;
+  background: rgba(52, 168, 83, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
 }

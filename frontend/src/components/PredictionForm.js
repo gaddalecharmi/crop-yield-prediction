@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import './PredictionForm.css';
+import { translateDropdownValue } from '../utils/translationMappings';
 
 const PredictionForm = () => {
+  const { t, i18n } = useTranslation();
   const [formData, setFormData] = useState({
     Crop: '',
-    Crop_Year: new Date().getFullYear(),
     Season: '',
     State: '',
     Area: '',
@@ -67,15 +69,15 @@ const PredictionForm = () => {
 
   // New function to auto-predict fertilizer and pesticide
   const predictInputs = async (updatedFormData) => {
-    const { Crop, Crop_Year, Season, State, Area, Annual_Rainfall } = updatedFormData;
+    const { Crop, Season, State, Area, Annual_Rainfall } = updatedFormData;
     
     // Check if all required fields are filled
-    if (Crop && Crop_Year && Season && State && Area && Annual_Rainfall) {
+    if (Crop && Season && State && Area && Annual_Rainfall) {
       try {
         console.log('🌾 Auto-predicting fertilizer and pesticide...');
         const response = await axios.post('/api/crops/predict-inputs', {
           Crop,
-          Crop_Year,
+          Crop_Year: new Date().getFullYear(), // Use current year for backend
           Season,
           State,
           Area: parseFloat(Area),
@@ -99,15 +101,15 @@ const PredictionForm = () => {
 
   // Trigger input prediction when Area or Annual_Rainfall changes (after all other fields are filled)
   useEffect(() => {
-    const { Crop, Crop_Year, Season, State, Area, Annual_Rainfall } = formData;
-    if (Crop && Crop_Year && Season && State && Area && Annual_Rainfall) {
+    const { Crop, Season, State, Area, Annual_Rainfall } = formData;
+    if (Crop && Season && State && Area && Annual_Rainfall) {
       // Debounce the prediction to avoid too many API calls
       const timeoutId = setTimeout(() => {
         predictInputs(formData);
       }, 500);
       return () => clearTimeout(timeoutId);
     }
-  }, [formData.Crop, formData.Crop_Year, formData.Season, formData.State, formData.Area, formData.Annual_Rainfall]);
+  }, [formData.Crop, formData.Season, formData.State, formData.Area, formData.Annual_Rainfall]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -117,7 +119,12 @@ const PredictionForm = () => {
 
     try {
       console.log('🚀 Sending prediction request:', formData);
-      const response = await axios.post('/api/crops/predict', formData);
+      // Add current year to the request
+      const requestData = {
+        ...formData,
+        Crop_Year: new Date().getFullYear()
+      };
+      const response = await axios.post('/api/crops/predict', requestData);
       console.log('✅ Prediction response:', response.data);
       setPrediction(response.data);
     } catch (err) {
@@ -130,52 +137,41 @@ const PredictionForm = () => {
 
   return (
     <div className="prediction-form-container">
-      <h2>🔮 Predict Crop Yield</h2>
+      <h2>🔮 {t('prediction.title')}</h2>
+      <p className="form-subtitle">{t('prediction.subtitle')}</p>
       
       <form onSubmit={handleSubmit} className="prediction-form">
         <div className="form-row">
           <div className="form-group">
-            <label>Crop Type *</label>
+            <label>{t('prediction.form.crop')} *</label>
             <select
               name="Crop"
               value={formData.Crop}
               onChange={handleChange}
               required
             >
-              <option value="">Select Crop</option>
+              <option value="">{t('prediction.form.cropPlaceholder')}</option>
               {filters.crops.map(crop => (
-                <option key={crop} value={crop}>{crop}</option>
+                <option key={crop} value={crop}>
+                  {translateDropdownValue(crop, 'crop', i18n.language)}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="form-group">
-            <label>Crop Year *</label>
-            <input
-              type="number"
-              name="Crop_Year"
-              value={formData.Crop_Year}
-              onChange={handleChange}
-              placeholder="e.g., 2025"
-              min="1990"
-              max={new Date().getFullYear() + 5}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>Season *</label>
+            <label>{t('prediction.form.season')} *</label>
             <select
               name="Season"
               value={formData.Season}
               onChange={handleChange}
               required
             >
-              <option value="">Select Season</option>
+              <option value="">{t('prediction.form.seasonPlaceholder')}</option>
               {filters.seasons.map(season => (
-                <option key={season} value={season}>{season}</option>
+                <option key={season} value={season}>
+                  {translateDropdownValue(season, 'season', i18n.language)}
+                </option>
               ))}
             </select>
           </div>
@@ -183,28 +179,30 @@ const PredictionForm = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label>State *</label>
+            <label>{t('prediction.form.state')} *</label>
             <select
               name="State"
               value={formData.State}
               onChange={handleChange}
               required
             >
-              <option value="">Select State</option>
+              <option value="">{t('prediction.form.statePlaceholder')}</option>
               {filters.states.map(state => (
-                <option key={state} value={state}>{state}</option>
+                <option key={state} value={state}>
+                  {translateDropdownValue(state, 'state', i18n.language)}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="form-group">
-            <label>Area (hectares) *</label>
+            <label>{t('prediction.form.area')} *</label>
             <input
               type="number"
               name="Area"
               value={formData.Area}
               onChange={handleChange}
-              placeholder="Enter area in hectares"
+              placeholder={t('prediction.form.areaPlaceholder')}
               step="0.01"
               required
             />
@@ -213,26 +211,26 @@ const PredictionForm = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label>Annual Rainfall (mm) * 🌧️</label>
+            <label>{t('prediction.form.rainfall')} * 🌧️</label>
             <input
               type="number"
               name="Annual_Rainfall"
               value={formData.Annual_Rainfall}
               onChange={handleChange}
-              placeholder="Auto-filled by weather data"
+              placeholder={t('prediction.form.rainfallPlaceholder')}
               step="0.01"
               required
             />
           </div>
 
           <div className="form-group">
-            <label>Fertilizer (kg) * 🤖</label>
+            <label>{t('prediction.form.fertilizer')} * 🤖</label>
             <input
               type="number"
               name="Fertilizer"
               value={formData.Fertilizer}
               onChange={handleChange}
-              placeholder="Auto-predicted by AI"
+              placeholder={t('prediction.form.fertilizerPlaceholder')}
               step="0.01"
               required
             />
@@ -241,13 +239,13 @@ const PredictionForm = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label>Pesticide (kg) * 🤖</label>
+            <label>{t('prediction.form.pesticide')} * 🤖</label>
             <input
               type="number"
               name="Pesticide"
               value={formData.Pesticide}
               onChange={handleChange}
-              placeholder="Auto-predicted by AI"
+              placeholder={t('prediction.form.pesticidePlaceholder')}
               step="0.01"
               required
             />
@@ -255,7 +253,7 @@ const PredictionForm = () => {
         </div>
 
         <button type="submit" className="submit-btn" disabled={loading}>
-          {loading ? '🔄 Predicting...' : '📊 Predict Yield'}
+          {loading ? t('prediction.form.predictingBtn') : t('prediction.form.predictBtn')}
         </button>
       </form>
 
@@ -267,7 +265,7 @@ const PredictionForm = () => {
 
       {prediction && (
         <div className="prediction-result">
-          <h3>✅ Prediction Results</h3>
+          <h3>✅ {t('prediction.results.title')}</h3>
           {prediction.message && (
             <div className="success-message">
               {prediction.message}
@@ -275,12 +273,12 @@ const PredictionForm = () => {
           )}
           <div className="result-grid">
             <div className="result-item highlight">
-              <span className="label">🎯 Predicted Yield:</span>
-              <span className="value">{prediction.predicted_yield} tons/hectare</span>
+              <span className="label">🎯 {t('prediction.results.yield')}:</span>
+              <span className="value">{prediction.predicted_yield} {t('prediction.results.tonsPerHectare')}</span>
             </div>
             <div className="result-item highlight">
-              <span className="label">📊 Estimated Production:</span>
-              <span className="value">{prediction.estimated_production?.toLocaleString()} tons</span>
+              <span className="label">📊 {t('prediction.results.production')}:</span>
+              <span className="value">{prediction.estimated_production?.toLocaleString()} {t('prediction.results.tons')}</span>
             </div>
             <div className="result-item">
               <span className="label">🆔 Prediction ID:</span>
