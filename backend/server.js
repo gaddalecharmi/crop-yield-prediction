@@ -4,6 +4,10 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const cropRoutes = require('./routes/cropRoutes');
 const translateRoutes = require('./routes/translateRoutes');
+const learningRoutes = require('./routes/learningRoutes');
+const shopRoutes = require('./routes/shopRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const subsidyRoutes = require('./routes/subsidyRoutes');
 
 dotenv.config();
 
@@ -25,11 +29,22 @@ mongoose.connect(process.env.MONGODB_URI, {
 // Routes
 app.use('/api/crops', cropRoutes);
 app.use('/api/translate', translateRoutes);
+app.use('/api/learning', learningRoutes);
+app.use('/api/shop', shopRoutes);
+app.use('/api/payment', paymentRoutes);
+app.use('/api/subsidy', subsidyRoutes);
 
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Crop Yield Prediction API is running!',
     features: ['Crop Yield Prediction', 'Data Management', 'Statistics', 'Multilingual Support']
+    endpoints: {
+      crops: '/api/crops',
+      learning: '/api/learning',
+      shop: '/api/shop',
+      payment: '/api/payment',
+      subsidy: '/api/subsidy'
+    }
   });
 });
 
