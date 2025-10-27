@@ -315,6 +315,44 @@
   font-size: 0.95rem;
 }
 
+.prediction-summary {
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, rgba(144, 238, 144, 0.1) 0%, rgba(60, 179, 113, 0.1) 100%);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 2px solid #90ee90;
+  box-shadow: 0 4px 15px rgba(34, 139, 34, 0.1);
+}
+
+.prediction-summary h4 {
+  color: #228b22;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.summary-text {
+  color: #2e4a3e;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  text-align: justify;
+  margin: 0;
+  font-weight: 400;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 1.2rem;
+  border-radius: 8px;
+  border-left: 4px solid #3cb371;
+}
+
+.summary-text strong {
+  color: #228b22;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
 @media (max-width: 768px) {
   .form-row {
     grid-template-columns: 1fr;

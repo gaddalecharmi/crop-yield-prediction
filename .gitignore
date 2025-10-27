@@ -29,8 +29,9 @@ wheels/
 *.ipynb_checkpoints
 
 # ML Models - DO NOT PUSH LARGE MODEL FILES TO GITHUB
-*.pkl
+
 *.joblib
+*.pkl
 *.h5
 *.model
 

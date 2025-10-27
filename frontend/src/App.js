@@ -5,6 +5,8 @@ import './i18n'; // Initialize i18n
 import PredictionForm from './components/PredictionForm';
 import DataTable from './components/DataTable';
 import Statistics from './components/Statistics';
+import LearningDashboard from './components/LearningDashboard';
+import ShopDashboard from './components/ShopDashboard';
 import LanguageSwitcher from './components/LanguageSwitcher';
 
 function App() {
@@ -32,6 +34,18 @@ function App() {
             {t('nav.predict')}
           </button>
           <button 
+            className={activeTab === 'learning' ? 'active' : ''}
+            onClick={() => setActiveTab('learning')}
+          >
+            {t('nav.learning')}
+          </button>
+          <button 
+            className={activeTab === 'shop' ? 'active' : ''}
+            onClick={() => setActiveTab('shop')}
+          >
+            {t('nav.shop')}
+          </button>
+          <button 
             className={activeTab === 'data' ? 'active' : ''}
             onClick={() => setActiveTab('data')}
           >
@@ -47,12 +61,14 @@ function App() {
 
         <main className="main-content">
           {activeTab === 'predict' && <PredictionForm />}
+          {activeTab === 'learning' && <LearningDashboard />}
+          {activeTab === 'shop' && <ShopDashboard />}
           {activeTab === 'data' && <DataTable />}
           {activeTab === 'stats' && <Statistics />}
         </main>
 
         <footer className="App-footer">
-          <p>© 2025 {t('app.title')} | Powered by Machine Learning</p>
+          <p>© 2025 Crop Yield Prediction System | Powered by Machine Learning</p>
         </footer>
       </div>
     </Suspense>

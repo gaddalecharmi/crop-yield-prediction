@@ -37,7 +37,7 @@ app.use('/api/subsidy', subsidyRoutes);
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Crop Yield Prediction API is running!',
-    features: ['Crop Yield Prediction', 'Data Management', 'Statistics', 'Multilingual Support']
+    features: ['Crop Yield Prediction', 'Data Management', 'Statistics', 'Multilingual Support'],
     endpoints: {
       crops: '/api/crops',
       learning: '/api/learning',

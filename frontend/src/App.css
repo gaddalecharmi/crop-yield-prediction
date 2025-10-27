@@ -170,16 +170,6 @@
   font-size: 0.95rem;
 }
 
-.App-footer::before {
-  content: '🌾 ';
-  font-size: 1rem;
-}
-
-.App-footer::after {
-  content: ' 🌱';
-  font-size: 1rem;
-}
-
 @media (max-width: 768px) {
   .App-header h1 {
     font-size: 2rem;

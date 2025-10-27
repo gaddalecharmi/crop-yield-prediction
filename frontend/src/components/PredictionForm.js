@@ -137,7 +137,7 @@ const PredictionForm = () => {
 
   return (
     <div className="prediction-form-container">
-      <h2>🔮 {t('prediction.title')}</h2>
+      <h2> {t('prediction.title')}</h2>
       <p className="form-subtitle">{t('prediction.subtitle')}</p>
       
       <form onSubmit={handleSubmit} className="prediction-form">
@@ -211,7 +211,7 @@ const PredictionForm = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label>{t('prediction.form.rainfall')} * 🌧️</label>
+            <label>{t('prediction.form.rainfall')} * </label>
             <input
               type="number"
               name="Annual_Rainfall"
@@ -224,7 +224,7 @@ const PredictionForm = () => {
           </div>
 
           <div className="form-group">
-            <label>{t('prediction.form.fertilizer')} * 🤖</label>
+            <label>{t('prediction.form.fertilizer')} *</label>
             <input
               type="number"
               name="Fertilizer"
@@ -239,7 +239,7 @@ const PredictionForm = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label>{t('prediction.form.pesticide')} * 🤖</label>
+            <label>{t('prediction.form.pesticide')} * </label>
             <input
               type="number"
               name="Pesticide"
@@ -281,14 +281,6 @@ const PredictionForm = () => {
               <span className="value">{prediction.estimated_production?.toLocaleString()} {t('prediction.results.tons')}</span>
             </div>
             <div className="result-item">
-              <span className="label">🆔 Prediction ID:</span>
-              <span className="value">{prediction.prediction_id}</span>
-            </div>
-            <div className="result-item">
-              <span className="label">🤖 Model Version:</span>
-              <span className="value">{prediction.model_version}</span>
-            </div>
-            <div className="result-item">
               <span className="label">📅 Prediction Date:</span>
               <span className="value">{new Date(prediction.prediction_date).toLocaleString()}</span>
             </div>
@@ -326,6 +318,16 @@ const PredictionForm = () => {
                 <span className="value">{prediction.input_data?.Pesticide} kg</span>
               </div>
             </div>
+          </div>
+
+          <div className="prediction-summary">
+            <h4>📋 Analysis Summary</h4>
+            <p className="summary-text">
+              Based on the current agricultural conditions and inputs provided, our AI model predicts a yield of <strong>{prediction.predicted_yield} tons per hectare</strong> for {prediction.input_data?.Crop} cultivation during the {prediction.input_data?.Season} season in {prediction.input_data?.State}. 
+              With the cultivated area of {prediction.input_data?.Area} hectares, this translates to an estimated total production of <strong>{prediction.estimated_production?.toLocaleString()} tons</strong>. 
+              This prediction takes into account the annual rainfall of {prediction.input_data?.Annual_Rainfall}mm, fertilizer application of {prediction.input_data?.Fertilizer}kg, and pesticide usage of {prediction.input_data?.Pesticide}kg. 
+              These insights can help you make informed decisions about crop management, resource allocation, and market planning.
+            </p>
           </div>
         </div>
       )}
