@@ -17,7 +17,7 @@ function LearningDashboard() {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/learning/categories');
+      const response = await axios.get('/api/learning/categories');
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -27,7 +27,7 @@ function LearningDashboard() {
   const fetchContent = async (category) => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:5000/api/learning/content`, {
+      const response = await axios.get('/api/learning/content', {
         params: { category }
       });
       setContent(response.data);
@@ -42,7 +42,7 @@ function LearningDashboard() {
 
   const viewContent = async (contentId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/learning/content/${contentId}`);
+      const response = await axios.get(`/api/learning/content/${contentId}`);
       setSelectedContent(response.data);
     } catch (error) {
       console.error('Error fetching content details:', error);
@@ -51,7 +51,7 @@ function LearningDashboard() {
 
   const likeContent = async (contentId) => {
     try {
-      await axios.post(`http://localhost:5000/api/learning/content/${contentId}/like`);
+      await axios.post(`/api/learning/content/${contentId}/like`);
       // Refresh content
       if (selectedContent && selectedContent._id === contentId) {
         viewContent(contentId);

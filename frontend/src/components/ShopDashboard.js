@@ -75,7 +75,7 @@ function ShopDashboard() {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/shop/categories');
+      const response = await axios.get('/api/shop/categories');
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -85,7 +85,7 @@ function ShopDashboard() {
   const fetchProducts = async (category) => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/api/shop/products', {
+      const response = await axios.get('/api/shop/products', {
         params: { category }
       });
       setProducts(response.data);
@@ -99,7 +99,7 @@ function ShopDashboard() {
 
   const viewProductDetail = async (productId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/shop/products/${productId}`);
+      const response = await axios.get(`/api/shop/products/${productId}`);
       setSelectedProduct(response.data);
       setView('product-detail');
     } catch (error) {
@@ -155,7 +155,7 @@ function ShopDashboard() {
 
   const checkSubsidyEligibility = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/subsidy/check-eligibility', userDetails);
+      const response = await axios.post('/api/subsidy/check-eligibility', userDetails);
       setSubsidyInfo(response.data);
     } catch (error) {
       console.error('Error checking eligibility:', error);
@@ -186,11 +186,11 @@ function ShopDashboard() {
         paymentMethod: 'RAZORPAY'
       };
 
-      const orderResponse = await axios.post('http://localhost:5000/api/payment/orders', orderData);
+      const orderResponse = await axios.post('/api/payment/orders', orderData);
       const order = orderResponse.data;
 
       // Create Razorpay order
-      const razorpayResponse = await axios.post('http://localhost:5000/api/payment/create-order', {
+      const razorpayResponse = await axios.post('/api/payment/create-order', {
         amount: totals.totalAmount,
         receipt: order.orderNumber
       });
@@ -204,7 +204,7 @@ function ShopDashboard() {
         order_id: razorpayResponse.data.id,
         handler: async function (response) {
           // Verify payment
-          await axios.post('http://localhost:5000/api/payment/verify-payment', {
+          await axios.post('/api/payment/verify-payment', {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
