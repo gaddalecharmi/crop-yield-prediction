@@ -70,5 +70,59 @@
       "features_count": 7
     },
     "status": "success"
+  },
+  {
+    "retrain_date": "2026-10-02T11:44:39.242991",
+    "model_version": "Random_Forest_v1.0",
+    "dataset_size": 19577,
+    "metrics": {
+      "mse": 0.25996442769585193,
+      "rmse": 0.5098670686520673,
+      "r2_score": 0.902945205552421,
+      "train_score": 0.9582098285261216,
+      "test_score": 0.902945205552421
+    },
+    "training_duration_seconds": 2.55496,
+    "data_summary": {
+      "total_records": 19577,
+      "features_count": 7
+    },
+    "status": "success"
+  },
+  {
+    "retrain_date": "2026-10-02T13:37:29.695226",
+    "model_version": "Random_Forest_v1.0",
+    "dataset_size": 19577,
+    "metrics": {
+      "mse": 0.25996442769585193,
+      "rmse": 0.5098670686520673,
+      "r2_score": 0.902945205552421,
+      "train_score": 0.9582098285261216,
+      "test_score": 0.902945205552421
+    },
+    "training_duration_seconds": 2.226203,
+    "data_summary": {
+      "total_records": 19577,
+      "features_count": 7
+    },
+    "status": "success"
+  },
+  {
+    "retrain_date": "2026-10-02T13:49:42.779681",
+    "model_version": "Random_Forest_v1.0",
+    "dataset_size": 19577,
+    "metrics": {
+      "mse": 0.25996442769585193,
+      "rmse": 0.5098670686520673,
+      "r2_score": 0.902945205552421,
+      "train_score": 0.9582098285261216,
+      "test_score": 0.902945205552421
+    },
+    "training_duration_seconds": 1.434751,
+    "data_summary": {
+      "total_records": 19577,
+      "features_count": 7
+    },
+    "status": "success"
   }
 ]

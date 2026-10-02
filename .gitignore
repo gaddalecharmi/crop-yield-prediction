@@ -83,3 +83,8 @@ catboost_info/
 
 # CSV data (uncomment if you don't want to track large datasets)
 # *.csv
+backend/.env
+node_modules/
+__pycache__/
+*.pyc
+ml-service/*.pkl

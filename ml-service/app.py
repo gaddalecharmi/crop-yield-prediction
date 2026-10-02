@@ -228,6 +228,15 @@ def create_encoders_from_dataset():
     except Exception as e:
         print(f"❌ Error creating encoders: {str(e)}")
 
+def normalize_for_encoder(encoder, value):
+    """Match normalized input to the exact value stored by a saved encoder."""
+    normalized_value = str(value).strip()
+    matching_values = [
+        class_value for class_value in encoder.classes_
+        if str(class_value).strip() == normalized_value
+    ]
+    return matching_values[0] if matching_values else normalized_value
+
 @app.route('/', methods=['GET'])
 def home():
     return jsonify({
@@ -323,9 +332,9 @@ def predict():
                 return jsonify({'error': f'Missing field: {field}'}), 400
         
         # Normalize input data - strip all whitespace since encoders are now created from stripped values
-        crop_value = str(data['Crop']).strip()
-        season_value = str(data['Season']).strip()  # Remove all trailing/leading spaces
-        state_value = str(data['State']).strip()
+        crop_value = normalize_for_encoder(label_encoders['Crop'], data['Crop'])
+        season_value = normalize_for_encoder(label_encoders['Season'], data['Season'])
+        state_value = normalize_for_encoder(label_encoders['State'], data['State'])
         
         print(f"🔍 Normalized values - Crop: '{crop_value}', Season: '{season_value}', State: '{state_value}'")
         
@@ -355,18 +364,16 @@ def predict():
                 }
             }), 400
         
-        # Prepare features as DataFrame with encoded values
-        # IMPORTANT: Column names must match what model expects (not _encoded suffix)
-        # Model expects: Crop, Crop_Year, Season, State, Area, Production, Annual_Rainfall, Fertilizer, Pesticide
+        # Prepare features with the encoded column names used during training.
         
         # Get Crop_Year from request or use current year as default
         crop_year = int(data.get('Crop_Year', 2025))
         
         features_df = pd.DataFrame({
-            'Crop': [crop_encoded],  # Use 'Crop' not 'Crop_encoded'
+            'Crop_encoded': [crop_encoded],
             'Crop_Year': [crop_year],  # Add Crop_Year
-            'Season': [season_encoded],  # Use 'Season' not 'Season_encoded'
-            'State': [state_encoded],  # Use 'State' not 'State_encoded'
+            'Season_encoded': [season_encoded],
+            'State_encoded': [state_encoded],
             'Area': [float(data['Area'])],
             'Production': [0.0],  # Add Production with placeholder (will be calculated later)
             'Annual_Rainfall': [float(data['Annual_Rainfall'])],

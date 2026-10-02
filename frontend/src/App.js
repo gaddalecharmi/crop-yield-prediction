@@ -68,7 +68,7 @@ function App() {
         </main>
 
         <footer className="App-footer">
-          <p>© 2025 Crop Yield Prediction System | Powered by Machine Learning</p>
+          <p>© 2026 Agriculture Data Analysis & Crop Yield Prediction System | Powered by Big Data Analytics</p>
         </footer>
       </div>
     </Suspense>
