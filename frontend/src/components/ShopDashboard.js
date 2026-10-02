@@ -7,7 +7,6 @@ function ShopDashboard() {
   const { t } = useTranslation();
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [cart, setCart] = useState([]);
   const [view, setView] = useState('categories'); // categories, products, product-detail, cart, checkout
@@ -90,7 +89,6 @@ function ShopDashboard() {
         params: { category }
       });
       setProducts(response.data);
-      setSelectedCategory(category);
       setView('products');
     } catch (error) {
       console.error('Error fetching products:', error);

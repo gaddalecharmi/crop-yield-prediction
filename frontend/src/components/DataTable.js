@@ -28,6 +28,24 @@ const DataTable = () => {
   }, []);
 
   useEffect(() => {
+    const fetchCrops = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({
+          page: currentPage,
+          limit: 20,
+          ...filters
+        });
+        const response = await axios.get(`/api/crops?${params}`);
+        setCrops(response.data.crops);
+        setTotalPages(response.data.totalPages);
+      } catch (err) {
+        console.error('Error fetching crops:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchCrops();
   }, [currentPage, filters]);
 
@@ -42,24 +60,6 @@ const DataTable = () => {
       });
     } catch (err) {
       console.error('Error fetching filter options:', err);
-    }
-  };
-
-  const fetchCrops = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: currentPage,
-        limit: 20,
-        ...filters
-      });
-      const response = await axios.get(`/api/crops?${params}`);
-      setCrops(response.data.crops);
-      setTotalPages(response.data.totalPages);
-    } catch (err) {
-      console.error('Error fetching crops:', err);
-    } finally {
-      setLoading(false);
     }
   };
 

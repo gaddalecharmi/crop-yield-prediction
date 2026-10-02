@@ -14,7 +14,7 @@ import {
   Legend,
   Filler
 } from 'chart.js';
-import { Bar, Line, Pie, Scatter, Doughnut } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import './Statistics.css';
 import { translateDropdownValue } from '../utils/translationMappings';
 
@@ -214,9 +214,6 @@ const Statistics = () => {
       }]
     };
   }
-
-  // Summary Statistics (kept for reference, not displayed)
-  const totalRecords = data.length;
 
   const chartOptions = {
     responsive: true,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import './PredictionForm.css';
@@ -25,6 +25,7 @@ const PredictionForm = () => {
   const [prediction, setPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { Crop, Season, State, Area, Annual_Rainfall } = formData;
 
   useEffect(() => {
     fetchFilters();
@@ -68,7 +69,7 @@ const PredictionForm = () => {
   };
 
   // New function to auto-predict fertilizer and pesticide
-  const predictInputs = async (updatedFormData) => {
+  const predictInputs = useCallback(async (updatedFormData) => {
     const { Crop, Season, State, Area, Annual_Rainfall } = updatedFormData;
     
     // Check if all required fields are filled
@@ -97,19 +98,18 @@ const PredictionForm = () => {
         // Continue without auto-filled values - user can enter manually
       }
     }
-  };
+  }, []);
 
   // Trigger input prediction when Area or Annual_Rainfall changes (after all other fields are filled)
   useEffect(() => {
-    const { Crop, Season, State, Area, Annual_Rainfall } = formData;
     if (Crop && Season && State && Area && Annual_Rainfall) {
       // Debounce the prediction to avoid too many API calls
       const timeoutId = setTimeout(() => {
-        predictInputs(formData);
+        predictInputs({ Crop, Season, State, Area, Annual_Rainfall });
       }, 500);
       return () => clearTimeout(timeoutId);
     }
-  }, [formData.Crop, formData.Season, formData.State, formData.Area, formData.Annual_Rainfall]);
+  }, [Crop, Season, State, Area, Annual_Rainfall, predictInputs]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
