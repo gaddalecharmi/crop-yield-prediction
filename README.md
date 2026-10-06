@@ -49,6 +49,17 @@ npm install
 npm start       # Runs on port 3000
 ```
 
+## ✅ GitHub Actions
+
+The workflow in `.github/workflows/ci.yml` runs automatically for pushes and pull
+requests targeting `main` or `master`. It:
+
+- Builds the React frontend
+- Installs and syntax-checks the Node.js backend
+- Installs the ML service dependencies and checks Python syntax
+
+No MongoDB, API keys, or deployment credentials are required for these checks.
+
 ## 🔌 API Endpoints
 
 **Backend (Port 5000)**
